@@ -74,7 +74,7 @@ whois transpirenetworks.com
 
 **Why it matters:** WHOIS is a fully passive technique — it gathers intelligence without sending a single packet to the target, making it undetectable.
 
-![WHOIS Lookup](Lab02/slide-2.jpg)
+![WHOIS Lookup](Lab02/2.jpg)
 
 ---
 
@@ -95,7 +95,7 @@ theHarvester -d fanshawec.ca -b google
 
 **Why it matters:** Email harvesting is a critical OSINT step — identifying staff emails exposes potential phishing and social engineering attack vectors.
 
-![theHarvester Email Enumeration](Lab02/slide-3.jpg)
+![theHarvester Email Enumeration](Lab02/3.jpg)
 
 ---
 
@@ -121,7 +121,7 @@ theHarvester -d fanshawec.ca -b google
 
 **Why it matters:** SpiderFoot automates hours of manual OSINT work, aggregating data from dozens of sources simultaneously.
 
-![SpiderFoot OSINT Scan](Lab02/slide-4.jpg)
+![SpiderFoot OSINT Scan](Lab02/4.jpg)
 
 ---
 
@@ -142,7 +142,7 @@ nmap -T4 -F 10.0.0.1/24
 
 **Why it matters:** Open ports 135, 139, and 445 are Windows SMB services — a known attack surface for exploits like EternalBlue (MS17-010).
 
-![Nmap Port Scan](Lab02/slide-5.jpg)
+![Nmap Port Scan](Lab02/5.jpg)
 
 ---
 
@@ -163,7 +163,7 @@ sudo unicornscan -mT 10.0.0.1/24 -p 139 -Iv -r 200 -s 192.168.1.2
 
 **Why it matters:** Unicornscan is faster than Nmap for large-scale scanning and supports source address randomization for stealthier authorized red team engagements.
 
-![Unicornscan Advanced Scanning](Lab02/slide-6.jpg)
+![Unicornscan Advanced Scanning](Lab02/6.jpg)
 
 ---
 
