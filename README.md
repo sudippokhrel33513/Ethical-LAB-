@@ -1,4 +1,4 @@
-[Ethical-LAB-README.md](https://github.com/user-attachments/files/28242197/Ethical-LAB-README.md)
+[Ethical-LAB-README (2).md](https://github.com/user-attachments/files/28242416/Ethical-LAB-README.2.md)
 # 🧪 Ethical Hacking & Reconnaissance Lab
 
 > **Fanshawe College — Ethical Hacking and Exploits**
@@ -10,7 +10,6 @@
 
 ![Kali Linux](https://img.shields.io/badge/Kali_Linux-557C94?style=flat-square&logo=kalilinux&logoColor=white)
 ![Nmap](https://img.shields.io/badge/Nmap-0E83CD?style=flat-square&logo=nmap&logoColor=white)
-![Wireshark](https://img.shields.io/badge/Wireshark-1679A7?style=flat-square&logo=wireshark&logoColor=white)
 ![VMware](https://img.shields.io/badge/VMware-607078?style=flat-square&logo=vmware&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
 
@@ -30,7 +29,7 @@
 - **Platform:** VMware Workstation
 - **Attacker OS:** Kali Linux 2022.3
 - **Target Network:** Simulated enterprise network (10.0.0.1/24)
-- **Target Domains:** transpirenetworks.com, fanshawec.ca (for OSINT exercises)
+- **Target Domains:** transpirenetworks.com, fanshawec.ca (OSINT exercises)
 - **Lab Machines:** Windows 10, Windows 7, Windows Server 2016, Security Onion, Router, Client
 
 ---
@@ -51,10 +50,10 @@ cat transpire.txt
 
 **What it does:**
 - CeWL crawls the target website and extracts unique words
-- The generated wordlist (`transpire.txt`) can be used with tools like Hydra or John the Ripper for credential attacks
-- This technique is used in real penetration tests to build context-aware wordlists
+- The generated wordlist (`transpire.txt`) can be used with tools like Hydra or John the Ripper
+- Builds context-aware, target-specific wordlists for credential attacks
 
-![CeWL Wordlist Generation](screenshots/slide-1.jpg)
+![CeWL Wordlist Generation](Lab02/slide-1.jpg)
 
 ---
 
@@ -69,20 +68,19 @@ whois transpirenetworks.com
 
 **Key information extracted:**
 - Registrar: Tucows Domains Inc.
-- Registry Domain ID: 1797735662_DOMAIN_COM-VRSN
 - Creation Date: 2013-04-30
 - Name Servers: NS1.HOSTPAPA.COM / NS2.HOSTPAPA.COM
 - Domain Status: clientTransferProhibited
 
-**Why it matters:** WHOIS is a passive recon technique — it gathers intelligence without sending a single packet to the target, making it undetectable.
+**Why it matters:** WHOIS is a fully passive technique — it gathers intelligence without sending a single packet to the target, making it undetectable.
 
-![WHOIS Lookup](screenshots/slide-2.jpg)
+![WHOIS Lookup](Lab02/slide-2.jpg)
 
 ---
 
 ### Task 3 — theHarvester: Email & Host Enumeration
 
-**Objective:** Enumerate email addresses and hostnames associated with a target organization using OSINT sources.
+**Objective:** Enumerate email addresses and hostnames associated with a target organization.
 
 **Command used:**
 ```bash
@@ -95,9 +93,9 @@ theHarvester -d fanshawec.ca -b google
   - `www.fanshawec.ca` → `52.60.137.41`
   - `x22www.fanshawec.ca`
 
-**Why it matters:** Email harvesting is a critical OSINT step in social engineering and phishing attack simulations. Identifying staff emails exposes potential attack vectors.
+**Why it matters:** Email harvesting is a critical OSINT step — identifying staff emails exposes potential phishing and social engineering attack vectors.
 
-![theHarvester Email Enumeration](screenshots/slide-3.jpg)
+![theHarvester Email Enumeration](Lab02/slide-3.jpg)
 
 ---
 
@@ -105,7 +103,7 @@ theHarvester -d fanshawec.ca -b google
 
 **Objective:** Run an automated multi-source OSINT scan to build a full intelligence profile of the target.
 
-**Tool:** SpiderFoot v4.0 (web-based UI at `127.0.0.1:6065`)
+**Tool:** SpiderFoot v4.0 (web UI at `127.0.0.1:6065`)
 
 **Scan Results Summary:**
 
@@ -114,18 +112,16 @@ theHarvester -d fanshawec.ca -b google
 | Affiliate Email Addresses | 4 | 4 |
 | Blacklisted Internet Names | 1 | 1 |
 | Cloud Storage Buckets | 6 | 6 |
-| Domain Names | 1 | 1 |
 | Email Addresses | 3 | 3 |
 | Internet Names | 14 | 17 |
-| Linked URLs (Internal) | 4 | 5 |
 | Malicious Internet Names | 1 | 1 |
 | Public Code Repositories | 11 | 11 |
 | Raw Data from RIRs/APIs | 189 | 207 |
 | Vulnerability - Third Party Disclosure | 2 | 2 |
 
-**Why it matters:** SpiderFoot automates what would take hours of manual OSINT work, aggregating data from dozens of sources simultaneously. The vulnerability disclosures and malicious name flags are particularly valuable findings.
+**Why it matters:** SpiderFoot automates hours of manual OSINT work, aggregating data from dozens of sources simultaneously.
 
-![SpiderFoot OSINT Scan](screenshots/slide-4.jpg)
+![SpiderFoot OSINT Scan](Lab02/slide-4.jpg)
 
 ---
 
@@ -133,7 +129,7 @@ theHarvester -d fanshawec.ca -b google
 
 **Objective:** Discover live hosts and open ports on the target network subnet.
 
-**Commands used:**
+**Command used:**
 ```bash
 nmap -T4 -F 10.0.0.1/24
 ```
@@ -143,21 +139,16 @@ nmap -T4 -F 10.0.0.1/24
   - `135/tcp` open — msrpc
   - `139/tcp` open — netbios-ssn
   - `445/tcp` open — microsoft-ds
-- **Host:** `10.0.0.99` — **UP** (all scanned ports closed)
 
-**Flags explained:**
-- `-T4` — Aggressive timing for faster scan
-- `-F` — Fast mode, scans top 100 ports only
+**Why it matters:** Open ports 135, 139, and 445 are Windows SMB services — a known attack surface for exploits like EternalBlue (MS17-010).
 
-**Why it matters:** Open ports 135, 139, and 445 are associated with Windows SMB services — a common attack surface for exploits like EternalBlue/MS17-010.
-
-![Nmap Port Scan](screenshots/slide-5.jpg)
+![Nmap Port Scan](Lab02/slide-5.jpg)
 
 ---
 
 ### Task 6 — Unicornscan: High-Speed Advanced Port Scanning
 
-**Objective:** Perform a high-speed asynchronous TCP scan using Unicornscan as an alternative to Nmap.
+**Objective:** Perform a high-speed asynchronous TCP scan as an advanced alternative to Nmap.
 
 **Command used:**
 ```bash
@@ -166,30 +157,29 @@ sudo unicornscan -mT 10.0.0.1/24 -p 139 -Iv -r 200 -s 192.168.1.2
 
 **Flags explained:**
 - `-mT` — TCP scan mode
-- `-p 139` — Target port 139 (NetBIOS)
-- `-Iv` — Verbose output
+- `-p 139` — Target NetBIOS port
 - `-r 200` — 200 packets per second
-- `-s` — Source address spoofing
+- `-s` — Source address for packets
 
-**Why it matters:** Unicornscan is faster than Nmap for large-scale scanning and supports source address randomization, useful for evading detection in authorized red team engagements.
+**Why it matters:** Unicornscan is faster than Nmap for large-scale scanning and supports source address randomization for stealthier authorized red team engagements.
 
-![Unicornscan Advanced Scanning](screenshots/slide-6.jpg)
+![Unicornscan Advanced Scanning](Lab02/slide-6.jpg)
 
 ---
 
 ## 📚 Key Takeaways
 
-- **Passive recon** (WHOIS, theHarvester, SpiderFoot) gathers intelligence without touching the target
+- **Passive recon** (WHOIS, theHarvester, SpiderFoot) gathers intel without touching the target
 - **Active recon** (Nmap, Unicornscan) identifies live hosts and open services
-- **Wordlist generation** (CeWL) supports credential-based attack phases
-- Open SMB ports (135, 139, 445) on the Windows host represent real-world attack surfaces
-- Automated tools like SpiderFoot dramatically accelerate the OSINT phase of a penetration test
+- **Wordlist generation** (CeWL) supports the credential attack phase
+- Open SMB ports (135, 139, 445) represent real-world Windows attack surfaces
+- Automated tools like SpiderFoot dramatically accelerate the OSINT phase of a pentest
 
 ---
 
 ## ⚠️ Disclaimer
 
-> All activities in this lab were performed in a **controlled, isolated lab environment** for educational purposes as part of the Fanshawe College Information Security Management program. No unauthorized systems were targeted. All domain OSINT was performed on publicly available information only.
+> All activities were performed in a **controlled, isolated lab environment** for educational purposes as part of the Fanshawe College Information Security Management program. No unauthorized systems were targeted.
 
 ---
 
