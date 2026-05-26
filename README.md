@@ -332,7 +332,7 @@ dir
 - `dir` output confirmed `nc.exe` (59,392 bytes) now exists on the target alongside system files:
   - `7z920.exe`, `autoexec.bat`, `config.sys`, `nc.exe`, `spokhrel.txt`
 
-![File Upload via Meterpreter](Lab06/lab06-slide-3.jpg)
+![File Upload via Meterpreter](Lab06/3.png)
 
 ---
 
@@ -356,7 +356,7 @@ msf6 exploit(multi/handler) > date && hostname
 - Session was killed (`sessions -k 1`) to simulate the victim restarting their machine
 - `date && hostname` confirmed attacker system info: `spokhrel157855`, Oct 21 2023
 
-![Registry Persistence Setup](Lab06/4.jpg)
+![Registry Persistence Setup](Lab06/4.png)
 
 ---
 
@@ -373,7 +373,7 @@ msf6 exploit(multi/handler) > date && hostname
   - Full name: `spokhrel157855-W7`
   - Username: `User`
 
-![Registry Verification on Windows 7](Lab06/5.jpg)
+![Registry Verification on Windows 7](Lab06/5.png)
 
 ---
 
@@ -399,7 +399,7 @@ meterpreter > reg deleteval -k HKLM\\Software\\Microsoft\\Windows\\CurrentVersio
 - `reg deleteval -v Backdoor` successfully removed the backdoor from the registry
 - Output: `Successfully deleted Backdoor.` — simulating post-pentest cleanup
 
-![Reconnection and Backdoor Removal](Lab06/6.jpg)
+![Reconnection and Backdoor Removal](Lab06/6.png)
 
 ---
 
@@ -425,7 +425,7 @@ meterpreter > reg queryval -k HKLM\\Software\\Microsoft\\Windows\\CurrentVersion
   - Data: `1234`
 - Bottom terminal: `uname -a && date` shows Kali Linux attacker system timestamp: Oct 21 2023
 
-![Advanced Registry Manipulation](Lab06/7.jpg)
+![Advanced Registry Manipulation](Lab06/7.png)
 
 ---
 
@@ -452,7 +452,7 @@ uname -a
 - Successfully exited and returned to Kali
 - Final `uname -a` confirms Kali Linux 5.18.0 attacker system: Oct 24 2023
 
-![Netcat Persistent Access](Lab06/8.jpg)
+![Netcat Persistent Access](Lab06/8.png)
 
 ---
 
