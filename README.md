@@ -53,7 +53,7 @@ cat transpire.txt
 - The generated wordlist (`transpire.txt`) can be used with tools like Hydra or John the Ripper
 - Builds context-aware, target-specific wordlists for credential attacks
 
-![CeWL Wordlist Generation](Lab02/slide-1.jpg)
+![CeWL Wordlist Generation](Lab02/1.jpg)
 
 ---
 
