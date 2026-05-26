@@ -1,4 +1,4 @@
-[Ethical-LAB-README (2).md](https://github.com/user-attachments/files/28242416/Ethical-LAB-README.2.md)
+[Ethical-LAB-README (3).md](https://github.com/user-attachments/files/28243429/Ethical-LAB-README.3.md)
 # 🧪 Ethical Hacking & Reconnaissance Lab
 
 > **Fanshawe College — Ethical Hacking and Exploits**
@@ -164,6 +164,44 @@ sudo unicornscan -mT 10.0.0.1/24 -p 139 -Iv -r 200 -s 192.168.1.2
 **Why it matters:** Unicornscan is faster than Nmap for large-scale scanning and supports source address randomization for stealthier authorized red team engagements.
 
 ![Unicornscan Advanced Scanning](Lab02/6.jpg)
+
+---
+
+### Task 7 — Unicornscan: Scan Results & Flag Reference
+
+**Objective:** Demonstrate a live Unicornscan TCP scan against the target subnet and review the tool's advanced flag options.
+
+**Command used:**
+```bash
+sudo unicornscan -mT 10.0.0.1/24 -p 139 -Iv -r 200 -s 192.168.1.2
+```
+
+**Live scan output breakdown:**
+- `adding 10.0.0.0/24 mode 'TCPscan' ports '139' pps 200` — Confirming subnet, port, and packet rate
+- `using interface(s) eth1` — Scanning through the eth1 network interface
+- `scanning 2.56e+02 total hosts` — Scanning all 256 hosts in the /24 subnet
+- `sender statistics 198.7 pps with 256 packets sent total` — Confirms ~200 packets/sec rate
+- `listener statistics 0 packets received 0 dropped` — No responses on port 139 from this subnet
+
+**Key flag reference shown in this screenshot:**
+
+| Flag | Description |
+|---|---|
+| `-Q, --quiet` | Suppress output to screen |
+| `-r, --pps` | Packets per second (higher = less accurate) |
+| `-R, --repeats` | Repeat packet scan N times |
+| `-s, --source-addr` | Source address for packets (supports random `r`) |
+| `-S, --no-shuffle` | Do not randomize port order |
+| `-t, --ip-ttl` | Set TTL on sent packets |
+| `-v, --verbose` | Verbose output (stack `-vvvvv` for maximum detail) |
+| `-w, --safefile` | Write PCAP file of received packets |
+| `-W, --fingerprint` | OS fingerprint (0=Cisco, 1=OpenBSD, 2=Windows XP, 5=nmap, 6=Linux) |
+| `-z, --sniff` | Sniff alike mode |
+| `-Z, --drone-str` | Drone string for distributed scanning |
+
+**Why it matters:** The 0 received packets on port 139 means NetBIOS is not exposed on this subnet — an important negative finding in a pentest report that rules out SMB-based attack vectors on this network segment.
+
+![Unicornscan Scan Results](Lab02/7.jpg)
 
 ---
 
