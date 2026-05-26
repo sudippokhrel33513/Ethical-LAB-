@@ -572,7 +572,7 @@ nano python_port_scan.py     # edit script
 - Port 6667 (IRC) is a key finding — this will be exploited in Task 3
 - `uname -a` confirms: Kali Linux 5.18.0-kali5 x86_64, Oct 26 2023
 
-![Python Port Scanner](Lab07/lab07-slide-1.jpg)
+![Python Port Scanner](Lab07/1.png)
 
 ---
 
@@ -614,7 +614,7 @@ nano lan_scan.py
 
 **Why it matters:** Service version detection is critical for identifying exploitable vulnerabilities. **vsftpd 2.3.4** and **UnrealIRCd** on port 6667 are both known to have backdoors — exactly what will be exploited next.
 
-![LAN Scanner with Service Detection](Lab07/lab07-slide-2.jpg)
+![LAN Scanner with Service Detection](Lab07/2.png)
 
 ---
 
@@ -643,7 +643,7 @@ exploit
 
 **Why it matters:** UnrealIRCd 3.2.8.1 contains a hardcoded backdoor introduced by attackers who compromised the source code. This is a real CVE (CVE-2010-2075) and a classic example of a **supply chain attack**.
 
-![UnrealIRCd Backdoor Exploit](Lab07/lab07-slide-3.jpg)
+![UnrealIRCd Backdoor Exploit](Lab07/3.png)
 
 ---
 
@@ -669,7 +669,7 @@ Hello, spokhrel157855!
 
 **Why it matters:** Understanding TCP socket programming is fundamental to network security. This skill is used in building custom exploits, reverse shells, C2 (command & control) tools, and network monitoring scripts.
 
-![Python Client Socket](Lab07/lab07-slide-4.jpg)
+![Python Client Socket](Lab07/4.png)
 
 ---
 
@@ -701,7 +701,7 @@ Modify: 2023-10-28 05:07:16
 
 **Why it matters:** Running a server socket on the target demonstrates the full **client-server communication model** used in network programming. The overly permissive `0777` permissions on the script is itself a misconfiguration finding — a real security risk in production environments.
 
-![Python Server Socket on Metasploitable2](Lab07/lab07-slide-5.jpg)
+![Python Server Socket on Metasploitable2](Lab07/5.png)
 
 ---
 
